@@ -28,7 +28,7 @@ export default function Component({
 
     useEffect(() => {
         setThreadMessages(messages);
-        scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
+        scrollRef?.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, [messages]);
 
     const sortedMessages = useMemo(() => {
@@ -54,7 +54,7 @@ export default function Component({
             case "body":
                 setIncoming(true);
                 setStreamContent((prevState) => prevState + message);
-                scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
+                scrollRef?.current?.scrollIntoView({ behavior: "smooth", block: "end" });
                 break;
         }
     };
@@ -75,12 +75,11 @@ export default function Component({
     const content = [{ type: "text", text: { value: streamContent } }];
     const streamed = { ...streamedMessage, content: content };
     return (
-        <div className="flex flex-col w-full h-[65vh] overflow-y-scroll">
-            <div className="w-full max-w-screen-md mx-auto space-y-12">
+        <div ref={scrollRef} className="flex flex-col w-full h-[65vh] overflow-y-scroll">
+            <div className="w-full max-w-screen-md mx-auto space-y-8">
                 {sortedMessages?.map((message, idx) => <Message {...message} key={idx} />)}
                 {incoming ? <Message {...streamed} /> : <div />}
             </div>
-            <div ref={scrollRef} />
         </div>
     );
 }

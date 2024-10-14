@@ -22,7 +22,6 @@ export default function Component({ assistant = {}, onChanged }) {
 
     useEffect(() => {
         setFormValues(assistant);
-        console.log(assistant);
     }, [assistant]);
 
     const assistantForm = async (formData: FormData) => {

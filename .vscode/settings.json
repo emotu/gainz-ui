@@ -1,0 +1,7 @@
+{
+    "workbench.activityBar.orientation": "vertical",
+    "editor.fontSize": 13,
+    "files.autoSave": "afterDelay",
+    "editor.formatOnSave": true,
+    "editor.indentSize": "tabSize"
+}

@@ -1,29 +1,44 @@
 "use server";
 import { cookies } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
-export async function login(formData: FormData) {
-    const cookieStore = cookies();
-    const username = formData.get("username");
-    const resp = await fetch("http://localhost:8000/auth/token", {
-        method: "POST",
-        headers: new Headers({
-            "Content-Type": "application/json",
-        }),
-        body: JSON.stringify({ username }),
+interface LoginData {
+  username: string;
+  password: string;
+}
+
+interface ScreenProps {
+  assistants: Array<{
+    id: string;
+    name: string;
+    instructions: string;
+    model: string;
+  }>;
+  token: string;
+}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws';
+
+export async function login(data: LoginData) {
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
     });
 
-    if (!resp.ok) return false;
-    const token = await resp.json();
+    if (!response.ok) {
+      throw new Error('Login failed');
+    }
 
-    cookieStore.set({
-        name: "auth_token",
-        value: token.access_token,
-        httpOnly: true,
-        path: "/",
-    });
-
-    return redirect("/threads");
+    return response.json();
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
+  }
 }
 
 export async function sendMessage(threadId: string | null, formData: FormData) {
